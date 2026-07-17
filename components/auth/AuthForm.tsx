@@ -1,48 +1,59 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useState, type FormEvent } from "react";
+import { ApiClientError } from "@/lib/api";
 import { useLoginMutation, useRegisterMutation } from "@/hooks/useAuth";
+import { Button, FormField, type FormFieldProps } from "@/components/ui";
 
 export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const isLogin = mode === "login";
-  const router = useRouter();
   const login = useLoginMutation();
   const register = useRegisterMutation();
+  const pending = login.isPending || register.isPending;
   const [error, setError] = useState("");
+  const fields = [
+    ...(!isLogin
+      ? [{ label: "Full name", name: "name", placeholder: "Mubeen Hussain", autoComplete: "name", minLength: 2 }]
+      : []),
+    { label: "Email address", name: "email", type: "email", placeholder: "you@example.com", autoComplete: "email" },
+    {
+      label: "Password",
+      name: "password",
+      type: "password",
+      placeholder: "At least 8 characters",
+      autoComplete: isLogin ? "current-password" : "new-password",
+      minLength: 8,
+    },
+    ...(!isLogin
+      ? [{ label: "Confirm password", name: "confirmPassword", type: "password", placeholder: "Repeat your password", autoComplete: "new-password", minLength: 8 }]
+      : []),
+  ] satisfies FormFieldProps[];
 
-  async function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     setError("");
-    const data = Object.fromEntries(new FormData(event.currentTarget));
+    const fd = new FormData(e.currentTarget);
+    const name = String(fd.get("name") ?? "");
+    const email = String(fd.get("email") ?? "");
+    const password = String(fd.get("password") ?? "");
 
-    if (!isLogin && data.password !== data.confirmPassword) {
+    if (!isLogin && password !== String(fd.get("confirmPassword") ?? "")) {
       setError("Passwords do not match.");
       return;
     }
 
     try {
-      if (isLogin) {
-        await login.mutateAsync({
-          email: String(data.email),
-          password: String(data.password),
-        });
-      } else {
-        await register.mutateAsync({
-          name: String(data.name),
-          email: String(data.email),
-          password: String(data.password),
-        });
-      }
-      router.replace("/");
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Something went wrong.");
+      if (isLogin) await login.mutateAsync({ email, password });
+      else await register.mutateAsync({ name, email, password });
+    } catch (err) {
+      setError(
+        err instanceof ApiClientError
+          ? err.message
+          : "Something went wrong. Try again."
+      );
     }
   }
-
-  const inputClass =
-    "h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10";
 
   return (
     <div className="w-full max-w-md">
@@ -55,61 +66,15 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
         </h1>
         <p className="mt-3 text-sm leading-6 text-slate-500">
           {isLogin
-            ? "Your expenses, balances, and monthly insights are waiting."
-            : "Track spending, understand habits, and stay on top of every expense."}
+            ? "Your expenses and monthly insights are waiting."
+            : "Track spending and stay on top of every expense."}
         </p>
       </div>
 
-      <form className="space-y-4" onSubmit={submit}>
-        {!isLogin && (
-          <Field label="Full name">
-            <input
-              className={inputClass}
-              name="name"
-              placeholder="Alex Morgan"
-              autoComplete="name"
-              minLength={2}
-              required
-            />
-          </Field>
-        )}
-
-        <Field label="Email address">
-          <input
-            className={inputClass}
-            name="email"
-            type="email"
-            placeholder="alex@example.com"
-            autoComplete="email"
-            required
-          />
-        </Field>
-
-        <Field label="Password">
-          <input
-            className={inputClass}
-            name="password"
-            type="password"
-            placeholder="At least 8 characters"
-            autoComplete={isLogin ? "current-password" : "new-password"}
-            minLength={8}
-            required
-          />
-        </Field>
-
-        {!isLogin && (
-          <Field label="Confirm password">
-            <input
-              className={inputClass}
-              name="confirmPassword"
-              type="password"
-              placeholder="Repeat your password"
-              autoComplete="new-password"
-              minLength={8}
-              required
-            />
-          </Field>
-        )}
+      <form className="space-y-4" onSubmit={onSubmit}>
+        {fields.map((field) => (
+          <FormField key={field.name} {...field} required />
+        ))}
 
         {error && (
           <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -117,42 +82,17 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           </p>
         )}
 
-        <button
-          className="mt-2 h-12 w-full rounded-xl bg-slate-950 text-sm font-semibold text-white shadow-lg shadow-slate-950/15 transition hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-60"
-          disabled={login.isPending || register.isPending}
-        >
-          {login.isPending || register.isPending
-            ? "Please wait..."
-            : isLogin
-              ? "Sign in"
-              : "Create free account"}
-        </button>
+        <Button className="mt-2 h-12 w-full" loading={pending}>
+          {isLogin ? "Sign in" : "Create free account"}
+        </Button>
       </form>
 
       <p className="mt-7 text-center text-sm text-slate-500">
         {isLogin ? "New to Spentra?" : "Already have an account?"}{" "}
-        <Link
-          href={isLogin ? "/signup" : "/login"}
-          className="font-semibold text-emerald-600 hover:text-emerald-700"
-        >
+        <Link href={isLogin ? "/signup" : "/login"} className="font-semibold text-emerald-600 hover:text-emerald-700">
           {isLogin ? "Create an account" : "Sign in"}
         </Link>
       </p>
     </div>
-  );
-}
-
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: ReactNode;
-}) {
-  return (
-    <label className="block">
-      <span className="mb-2 block text-sm font-medium text-slate-700">{label}</span>
-      {children}
-    </label>
   );
 }

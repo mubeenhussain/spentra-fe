@@ -67,12 +67,17 @@ export async function api<T>(
       clearToken();
     }
 
-    const errorBody: ApiError =
-      data && typeof data === "object"
-        ? (data as ApiError)
-        : { message: response.statusText || "Request failed" };
+    const raw = data && typeof data === "object" ? (data as Record<string, unknown>) : null;
+    const message =
+      (typeof raw?.message === "string" && raw.message) ||
+      (typeof raw?.error === "string" && raw.error) ||
+      response.statusText ||
+      "Request failed";
 
-    throw new ApiClientError(response.status, errorBody);
+    throw new ApiClientError(response.status, {
+      message,
+      errors: raw?.errors as ApiError["errors"],
+    });
   }
 
   return data as T;
