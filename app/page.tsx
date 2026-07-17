@@ -13,8 +13,11 @@ export default function Home() {
           summary by category.
         </p>
         <p className="rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900">
-          Phase 0 setup complete — API base:{" "}
-          <code className="text-zinc-800 dark:text-zinc-200">
+          Phase 0 — Redux · Zustand · TanStack Query ready
+        </p>
+        <p className="text-xs text-zinc-400">
+          API:{" "}
+          <code className="text-zinc-600 dark:text-zinc-300">
             {process.env.NEXT_PUBLIC_API_URL}
           </code>
         </p>
