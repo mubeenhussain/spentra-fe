@@ -1,10 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch, useSelector } from "react-redux";
 import authReducer from "@/store/authSlice";
+import expensesReducer from "@/store/expensesSlice";
 
 export const makeStore = () =>
   configureStore({
-    reducer: { auth: authReducer },
+    reducer: {
+      auth: authReducer,
+      expenses: expensesReducer,
+    },
   });
 
 export type AppStore = ReturnType<typeof makeStore>;
