@@ -1,11 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { BrandMark } from "@/components/brand/Logo";
-import { Button } from "@/components/ui";
-import { useAppDispatch, useAppSelector } from "@/store";
-import { logout, selectAuth } from "@/store/authSlice";
+import { UserMenu } from "@/components/layout/UserMenu";
+import { useAppSelector } from "@/store";
+import { selectAuth } from "@/store/authSlice";
 
 export function AppShell({
   children,
@@ -14,36 +13,22 @@ export function AppShell({
   children: React.ReactNode;
   actions?: React.ReactNode;
 }) {
-  const dispatch = useAppDispatch();
-  const router = useRouter();
   const { user } = useAppSelector(selectAuth);
 
   return (
     <main className="min-h-screen bg-[var(--background)]">
       <header className="border-b border-slate-200/80 bg-white">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-6">
-          <div className="flex items-center gap-8">
+        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-2 px-4 sm:h-16 sm:gap-4 sm:px-6">
+          <div className="flex min-w-0 items-center gap-4 sm:gap-8">
             <BrandMark href="/dashboard" />
             <nav className="hidden items-center gap-1 sm:flex">
               <NavLink href="/dashboard">Dashboard</NavLink>
               <NavLink href="/expenses">Expenses</NavLink>
             </nav>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             {actions}
-            <span className="hidden text-sm text-slate-500 sm:inline">
-              {user?.name}
-            </span>
-            <Button
-              variant="secondary"
-              className="px-3 py-2"
-              onClick={() => {
-                dispatch(logout());
-                router.replace("/login");
-              }}
-            >
-              Log out
-            </Button>
+            <UserMenu name={user?.name} email={user?.email} />
           </div>
         </div>
       </header>

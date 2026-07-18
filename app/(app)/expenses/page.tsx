@@ -12,7 +12,10 @@ export default function ExpensesPage() {
   return (
     <AppShell
       actions={
-        <Button onClick={() => dispatch(openCreate())}>Add expense</Button>
+        <Button onClick={() => dispatch(openCreate())}>
+          <span className="sm:hidden">Add</span>
+          <span className="hidden sm:inline">Add expense</span>
+        </Button>
       }
     >
       <div className="mb-6">

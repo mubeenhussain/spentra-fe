@@ -64,7 +64,7 @@ const variants = {
 type Variant = keyof typeof variants;
 
 function btnClass(variant: Variant, className = "") {
-  return `inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${variants[variant]} ${className}`;
+  return `inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-xl px-3 py-2 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 sm:px-5 sm:py-2.5 sm:text-sm ${variants[variant]} ${className}`;
 }
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
