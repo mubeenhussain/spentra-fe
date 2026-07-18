@@ -1,22 +1,45 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type FormEvent } from "react";
-import { ApiClientError } from "@/lib/api";
-import { useLoginMutation, useRegisterMutation } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
+import { useEffect, useState, type FormEvent } from "react";
 import { Button, FormField, type FormFieldProps } from "@/components/ui";
+import { useAppDispatch, useAppSelector } from "@/store";
+import {
+  clearAuthError,
+  login,
+  register,
+  selectAuth,
+} from "@/store/authSlice";
 
 export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const isLogin = mode === "login";
-  const login = useLoginMutation();
-  const register = useRegisterMutation();
-  const pending = login.isPending || register.isPending;
-  const [error, setError] = useState("");
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const { status, error, token } = useAppSelector(selectAuth);
+  const [formError, setFormError] = useState("");
+  const pending = status === "loading";
+  const message = formError || error;
+
   const fields = [
     ...(!isLogin
-      ? [{ label: "Full name", name: "name", placeholder: "Mubeen Hussain", autoComplete: "name", minLength: 2 }]
+      ? [
+          {
+            label: "Full name",
+            name: "name",
+            placeholder: "Mubeen Hussain",
+            autoComplete: "name",
+            minLength: 2,
+          },
+        ]
       : []),
-    { label: "Email address", name: "email", type: "email", placeholder: "you@example.com", autoComplete: "email" },
+    {
+      label: "Email address",
+      name: "email",
+      type: "email",
+      placeholder: "you@example.com",
+      autoComplete: "email",
+    },
     {
       label: "Password",
       name: "password",
@@ -26,32 +49,43 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
       minLength: 8,
     },
     ...(!isLogin
-      ? [{ label: "Confirm password", name: "confirmPassword", type: "password", placeholder: "Repeat your password", autoComplete: "new-password", minLength: 8 }]
+      ? [
+          {
+            label: "Confirm password",
+            name: "confirmPassword",
+            type: "password",
+            placeholder: "Repeat your password",
+            autoComplete: "new-password",
+            minLength: 8,
+          },
+        ]
       : []),
   ] satisfies FormFieldProps[];
 
+  useEffect(() => {
+    if (token) router.replace("/dashboard");
+  }, [token, router]);
+
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setError("");
+    setFormError("");
+    dispatch(clearAuthError());
     const fd = new FormData(e.currentTarget);
     const name = String(fd.get("name") ?? "");
     const email = String(fd.get("email") ?? "");
     const password = String(fd.get("password") ?? "");
 
     if (!isLogin && password !== String(fd.get("confirmPassword") ?? "")) {
-      setError("Passwords do not match.");
+      setFormError("Passwords do not match.");
       return;
     }
 
-    try {
-      if (isLogin) await login.mutateAsync({ email, password });
-      else await register.mutateAsync({ name, email, password });
-    } catch (err) {
-      setError(
-        err instanceof ApiClientError
-          ? err.message
-          : "Something went wrong. Try again."
-      );
+    const action = isLogin
+      ? await dispatch(login({ email, password }))
+      : await dispatch(register({ name, email, password }));
+
+    if (login.fulfilled.match(action) || register.fulfilled.match(action)) {
+      router.replace("/dashboard");
     }
   }
 
@@ -76,9 +110,9 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           <FormField key={field.name} {...field} required />
         ))}
 
-        {error && (
+        {message && (
           <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
-            {error}
+            {message}
           </p>
         )}
 
@@ -89,7 +123,10 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
 
       <p className="mt-7 text-center text-sm text-slate-500">
         {isLogin ? "New to Spentra?" : "Already have an account?"}{" "}
-        <Link href={isLogin ? "/signup" : "/login"} className="font-semibold text-emerald-600 hover:text-emerald-700">
+        <Link
+          href={isLogin ? "/signup" : "/login"}
+          className="font-semibold text-emerald-600 hover:text-emerald-700"
+        >
           {isLogin ? "Create an account" : "Sign in"}
         </Link>
       </p>

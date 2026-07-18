@@ -3,25 +3,32 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAppSelector } from "@/store/hooks";
-import { useLogout, useMeQuery } from "@/hooks/useAuth";
 import { Button, PageLoader } from "@/components/ui";
+import { useAppDispatch, useAppSelector } from "@/store";
+import {
+  fetchMe,
+  logout,
+  selectAuth,
+  selectIsAuthenticated,
+} from "@/store/authSlice";
 
 export default function DashboardPage() {
+  const dispatch = useAppDispatch();
   const router = useRouter();
-  const logout = useLogout();
-  const { isAuthenticated, isHydrated, user } = useAppSelector((s) => s.auth);
-  const { data } = useMeQuery();
+  const { user, isHydrated } = useAppSelector(selectAuth);
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
 
   useEffect(() => {
     if (isHydrated && !isAuthenticated) router.replace("/login");
   }, [isHydrated, isAuthenticated, router]);
 
-  if (!isHydrated || !isAuthenticated) {
-    return <PageLoader />;
-  }
+  useEffect(() => {
+    if (isAuthenticated && !user) dispatch(fetchMe());
+  }, [dispatch, isAuthenticated, user]);
 
-  const name = data?.name ?? user?.name ?? "there";
+  if (!isHydrated || !isAuthenticated) return <PageLoader />;
+
+  const name = user?.name ?? "there";
 
   return (
     <main className="min-h-screen bg-[#f8faf9]">
@@ -31,7 +38,14 @@ export default function DashboardPage() {
         </Link>
         <div className="flex items-center gap-4">
           <span className="text-sm text-slate-500">{name}</span>
-          <Button onClick={logout}>Log out</Button>
+          <Button
+            onClick={() => {
+              dispatch(logout());
+              router.replace("/login");
+            }}
+          >
+            Log out
+          </Button>
         </div>
       </header>
 
@@ -44,7 +58,7 @@ export default function DashboardPage() {
         </p>
         <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6">
           <p className="text-sm text-slate-500">Signed in as</p>
-          <p className="mt-1 font-medium">{data?.email ?? user?.email}</p>
+          <p className="mt-1 font-medium">{user?.email}</p>
         </div>
       </section>
     </main>

@@ -1,7 +1,22 @@
-import { getToken, clearToken } from "@/lib/auth-token";
 import type { ApiError } from "@/types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api";
+const TOKEN_KEY = "spentra_token";
+
+export function getToken() {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+export function setToken(token: string) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(TOKEN_KEY, token);
+}
+
+export function clearToken() {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(TOKEN_KEY);
+}
 
 export class ApiClientError extends Error {
   status: number;
@@ -17,30 +32,17 @@ export class ApiClientError extends Error {
 
 type RequestOptions = Omit<RequestInit, "body"> & {
   body?: unknown;
-  /** Skip attaching Authorization header */
   skipAuth?: boolean;
 };
 
-/**
- * Central HTTP client for all backend calls.
- * Injects Bearer token from localStorage when present.
- */
-export async function api<T>(
-  path: string,
-  options: RequestOptions = {}
-): Promise<T> {
+export async function api<T>(path: string, options: RequestOptions = {}) {
   const { body, skipAuth = false, headers: customHeaders, ...rest } = options;
-
   const headers = new Headers(customHeaders);
-  if (!headers.has("Content-Type") && body !== undefined) {
-    headers.set("Content-Type", "application/json");
-  }
 
+  if (body !== undefined) headers.set("Content-Type", "application/json");
   if (!skipAuth) {
     const token = getToken();
-    if (token) {
-      headers.set("Authorization", `Bearer ${token}`);
-    }
+    if (token) headers.set("Authorization", `Bearer ${token}`);
   }
 
   const url = path.startsWith("http")
@@ -53,9 +55,7 @@ export async function api<T>(
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
 
-  if (response.status === 204) {
-    return undefined as T;
-  }
+  if (response.status === 204) return undefined as T;
 
   const contentType = response.headers.get("content-type") ?? "";
   const data = contentType.includes("application/json")
@@ -63,19 +63,16 @@ export async function api<T>(
     : null;
 
   if (!response.ok) {
-    if (response.status === 401) {
-      clearToken();
-    }
+    if (response.status === 401) clearToken();
 
-    const raw = data && typeof data === "object" ? (data as Record<string, unknown>) : null;
-    const message =
-      (typeof raw?.message === "string" && raw.message) ||
-      (typeof raw?.error === "string" && raw.error) ||
-      response.statusText ||
-      "Request failed";
-
+    const raw =
+      data && typeof data === "object" ? (data as Record<string, unknown>) : null;
     throw new ApiClientError(response.status, {
-      message,
+      message:
+        (typeof raw?.message === "string" && raw.message) ||
+        (typeof raw?.error === "string" && raw.error) ||
+        response.statusText ||
+        "Request failed",
       errors: raw?.errors as ApiError["errors"],
     });
   }
@@ -83,17 +80,13 @@ export async function api<T>(
   return data as T;
 }
 
-/** Convenience helpers */
 export const apiClient = {
   get: <T>(path: string, options?: RequestOptions) =>
     api<T>(path, { ...options, method: "GET" }),
-
   post: <T>(path: string, body?: unknown, options?: RequestOptions) =>
     api<T>(path, { ...options, method: "POST", body }),
-
   put: <T>(path: string, body?: unknown, options?: RequestOptions) =>
     api<T>(path, { ...options, method: "PUT", body }),
-
   delete: <T>(path: string, options?: RequestOptions) =>
     api<T>(path, { ...options, method: "DELETE" }),
 };
