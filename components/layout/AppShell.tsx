@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { BrandMark } from "@/components/brand/Logo";
 import { UserMenu } from "@/components/layout/UserMenu";
 import { useAppSelector } from "@/store";
@@ -38,10 +39,17 @@ export function AppShell({
 }
 
 function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
+  const pathname = usePathname();
+  const active = pathname === href || pathname.startsWith(`${href}/`);
+
   return (
     <Link
       href={href}
-      className="rounded-lg px-3 py-2 text-sm font-medium text-muted hover:bg-surface-2 hover:text-heading"
+      className={
+        active
+          ? "rounded-lg bg-brand-soft px-3 py-2 text-sm font-semibold text-brand-text"
+          : "rounded-lg px-3 py-2 text-sm font-medium text-muted hover:bg-surface-2 hover:text-heading"
+      }
     >
       {children}
     </Link>
