@@ -1,4 +1,5 @@
-import Link from "next/link";
+import { BrandMark } from "@/components/brand/Logo";
+import { LinkButton } from "@/components/ui";
 
 const features = [
   ["↗", "See every expense", "Keep daily spending organized in one clean, searchable place."],
@@ -8,18 +9,14 @@ const features = [
 
 export default function Home() {
   return (
-    <main className="overflow-hidden bg-[#f8faf9] text-slate-950">
+    <main className="overflow-hidden bg-[var(--background)] text-slate-950">
       <header className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2.5 text-xl font-bold">
-          <Logo /> Spentra
-        </Link>
+        <BrandMark />
         <nav className="flex items-center gap-3">
-          <Link href="/login" className="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-slate-950">
+          <LinkButton href="/login" variant="ghost">
             Log in
-          </Link>
-          <Link href="/signup" className="rounded-xl bg-slate-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-600">
-            Get started
-          </Link>
+          </LinkButton>
+          <LinkButton href="/signup">Get started</LinkButton>
         </nav>
       </header>
 
@@ -38,12 +35,12 @@ export default function Home() {
             can understand your habits and make every month count.
           </p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <Link href="/signup" className="rounded-xl bg-[#123c35] px-6 py-3.5 text-center text-sm font-semibold text-white shadow-xl shadow-emerald-950/15 transition hover:-translate-y-0.5 hover:bg-emerald-600">
+            <LinkButton href="/signup" variant="brand" className="px-6 py-3.5">
               Start tracking for free
-            </Link>
-            <a href="#features" className="rounded-xl border border-slate-200 bg-white px-6 py-3.5 text-center text-sm font-semibold text-slate-700 hover:border-slate-300">
+            </LinkButton>
+            <LinkButton href="#features" variant="secondary" className="px-6 py-3.5">
               See how it works
-            </a>
+            </LinkButton>
           </div>
           <p className="mt-5 text-xs text-slate-400">Free to start · No credit card required</p>
         </div>
@@ -60,7 +57,7 @@ export default function Home() {
           </div>
           <div className="mt-14 grid gap-5 md:grid-cols-3">
             {features.map(([icon, title, text]) => (
-              <article key={title} className="rounded-2xl border border-slate-100 bg-[#f8faf9] p-7 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-200/50">
+              <article key={title} className="rounded-2xl border border-slate-100 bg-[var(--background)] p-7 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-200/50">
                 <span className="grid size-10 place-items-center rounded-xl bg-emerald-100 text-lg font-bold text-emerald-700">{icon}</span>
                 <h3 className="mt-5 font-semibold">{title}</h3>
                 <p className="mt-2 text-sm leading-6 text-slate-500">{text}</p>
@@ -71,19 +68,21 @@ export default function Home() {
       </section>
 
       <section className="px-6 py-20 lg:px-8">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-8 rounded-3xl bg-[#123c35] px-7 py-12 text-center text-white sm:px-12 lg:flex-row lg:py-14 lg:text-left">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-8 rounded-3xl bg-[var(--brand)] px-7 py-12 text-center text-white sm:px-12 lg:flex-row lg:py-14 lg:text-left">
           <div>
             <h2 className="text-3xl font-semibold tracking-tight">Ready to feel good about your money?</h2>
             <p className="mt-3 text-sm text-emerald-50/65">Build better spending habits, one expense at a time.</p>
           </div>
-          <Link href="/signup" className="shrink-0 rounded-xl bg-emerald-400 px-6 py-3.5 text-sm font-semibold text-[#123c35] transition hover:bg-[#ffad8c]">
+          <LinkButton href="/signup" variant="accent" className="shrink-0 px-6 py-3.5">
             Create your free account
-          </Link>
+          </LinkButton>
         </div>
       </section>
 
       <footer className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 border-t border-slate-200 px-6 py-8 text-sm text-slate-400 sm:flex-row lg:px-8">
-        <span className="flex items-center gap-2 font-semibold text-slate-700"><Logo small /> Spentra</span>
+        <span className="flex items-center gap-2 font-semibold text-slate-700">
+          <BrandMark size="sm" />
+        </span>
         <p>© 2026 Spentra. Simple tracking, smarter spending.</p>
       </footer>
     </main>
@@ -106,10 +105,10 @@ function DashboardPreview() {
             <p className="text-xs text-slate-400">Good morning, Alex</p>
             <p className="mt-1 font-semibold">Your monthly overview</p>
           </div>
-          <span className="grid size-9 place-items-center rounded-full bg-[#ffad8c] text-xs font-bold text-[#123c35]">AM</span>
+          <span className="grid size-9 place-items-center rounded-full bg-[var(--accent)] text-xs font-bold text-[var(--brand)]">AM</span>
         </div>
         <div className="mt-5 grid grid-cols-2 gap-3">
-          <div className="rounded-2xl bg-[#123c35] p-5 text-white">
+          <div className="rounded-2xl bg-[var(--brand)] p-5 text-white">
             <p className="text-xs text-emerald-50/60">Total spent</p>
             <p className="mt-2 text-2xl font-semibold">$1,842.50</p>
             <p className="mt-3 text-xs text-emerald-300">↓ 12% from last month</p>
@@ -142,16 +141,5 @@ function DashboardPreview() {
         </div>
       </div>
     </div>
-  );
-}
-
-function Logo({ small = false }: { small?: boolean }) {
-  return (
-    <span className={`grid place-items-center rounded-xl bg-emerald-400 text-[#123c35] ${small ? "size-7" : "size-9"}`}>
-      <svg viewBox="0 0 24 24" className={small ? "size-4" : "size-5"} fill="none" stroke="currentColor" strokeWidth="2.3">
-        <path d="M5 8h11a3 3 0 0 1 3 3v7H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h10" />
-        <circle cx="15.5" cy="13" r="1" fill="currentColor" />
-      </svg>
-    </span>
   );
 }

@@ -1,6 +1,8 @@
+import Link from "next/link";
 import type {
   ButtonHTMLAttributes,
   InputHTMLAttributes,
+  ReactNode,
 } from "react";
 
 export type FormFieldProps = InputHTMLAttributes<HTMLInputElement> & {
@@ -12,9 +14,7 @@ export function FormField({ label, id, name, ...props }: FormFieldProps) {
 
   return (
     <label className="block" htmlFor={inputId}>
-      <span className="mb-2 block text-sm font-medium text-slate-700">
-        {label}
-      </span>
+      <span className="mb-2 block text-sm font-medium text-slate-700">{label}</span>
       <input
         {...props}
         id={inputId}
@@ -25,8 +25,26 @@ export function FormField({ label, id, name, ...props }: FormFieldProps) {
   );
 }
 
+const variants = {
+  primary:
+    "bg-slate-950 text-white hover:bg-emerald-600",
+  brand:
+    "bg-[var(--brand)] text-white shadow-xl shadow-emerald-950/15 hover:-translate-y-0.5 hover:bg-emerald-600",
+  secondary:
+    "border border-slate-200 bg-white text-slate-700 hover:border-slate-300",
+  ghost: "text-slate-600 hover:text-slate-950",
+  accent: "bg-emerald-400 text-[var(--brand)] hover:bg-[var(--accent)]",
+} as const;
+
+type Variant = keyof typeof variants;
+
+function btnClass(variant: Variant, className = "") {
+  return `inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${variants[variant]} ${className}`;
+}
+
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   loading?: boolean;
+  variant?: Variant;
 };
 
 export function Button({
@@ -34,17 +52,36 @@ export function Button({
   disabled,
   children,
   className = "",
+  variant = "primary",
   ...props
 }: ButtonProps) {
   return (
     <button
       {...props}
       disabled={disabled || loading}
-      className={`inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
+      className={btnClass(variant, className)}
     >
       {loading && <Spinner />}
       {children}
     </button>
+  );
+}
+
+export function LinkButton({
+  href,
+  children,
+  className = "",
+  variant = "primary",
+}: {
+  href: string;
+  children: ReactNode;
+  className?: string;
+  variant?: Variant;
+}) {
+  return (
+    <Link href={href} className={btnClass(variant, className)}>
+      {children}
+    </Link>
   );
 }
 

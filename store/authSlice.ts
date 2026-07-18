@@ -115,6 +115,7 @@ const authSlice = createSlice({
       .addCase(fetchMe.rejected, (state) => {
         state.user = null;
         state.token = null;
+        state.status = "idle";
         clearToken();
       });
   },

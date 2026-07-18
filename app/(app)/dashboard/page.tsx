@@ -1,41 +1,21 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Button, PageLoader } from "@/components/ui";
+import { BrandMark } from "@/components/brand/Logo";
+import { Button } from "@/components/ui";
 import { useAppDispatch, useAppSelector } from "@/store";
-import {
-  fetchMe,
-  logout,
-  selectAuth,
-  selectIsAuthenticated,
-} from "@/store/authSlice";
+import { logout, selectAuth } from "@/store/authSlice";
 
 export default function DashboardPage() {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { user, isHydrated } = useAppSelector(selectAuth);
-  const isAuthenticated = useAppSelector(selectIsAuthenticated);
-
-  useEffect(() => {
-    if (isHydrated && !isAuthenticated) router.replace("/login");
-  }, [isHydrated, isAuthenticated, router]);
-
-  useEffect(() => {
-    if (isAuthenticated && !user) dispatch(fetchMe());
-  }, [dispatch, isAuthenticated, user]);
-
-  if (!isHydrated || !isAuthenticated) return <PageLoader />;
-
+  const { user } = useAppSelector(selectAuth);
   const name = user?.name ?? "there";
 
   return (
-    <main className="min-h-screen bg-[#f8faf9]">
+    <main className="min-h-screen bg-[var(--background)]">
       <header className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
-        <Link href="/dashboard" className="font-bold text-slate-950">
-          Spentra
-        </Link>
+        <BrandMark href="/dashboard" />
         <div className="flex items-center gap-4">
           <span className="text-sm text-slate-500">{name}</span>
           <Button

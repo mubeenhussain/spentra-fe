@@ -3,6 +3,13 @@ import type { ApiError } from "@/types";
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api";
 const TOKEN_KEY = "spentra_token";
 
+let onUnauthorized: (() => void) | null = null;
+
+/** Register once from Redux so 401 always clears auth state + storage together */
+export function setUnauthorizedHandler(handler: () => void) {
+  onUnauthorized = handler;
+}
+
 export function getToken() {
   if (typeof window === "undefined") return null;
   return localStorage.getItem(TOKEN_KEY);
@@ -63,7 +70,7 @@ export async function api<T>(path: string, options: RequestOptions = {}) {
     : null;
 
   if (!response.ok) {
-    if (response.status === 401) clearToken();
+    if (response.status === 401) onUnauthorized?.();
 
     const raw =
       data && typeof data === "object" ? (data as Record<string, unknown>) : null;
