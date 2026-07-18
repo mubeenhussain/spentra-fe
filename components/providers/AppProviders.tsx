@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import { setUnauthorizedHandler } from "@/lib/api";
 import { hydrateAuth, logout } from "@/store/authSlice";
 import { makeStore, useAppDispatch } from "@/store";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 
 function AuthBootstrap({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();
@@ -22,7 +23,9 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 
   return (
     <Provider store={store}>
-      <AuthBootstrap>{children}</AuthBootstrap>
+      <ThemeProvider>
+        <AuthBootstrap>{children}</AuthBootstrap>
+      </ThemeProvider>
     </Provider>
   );
 }

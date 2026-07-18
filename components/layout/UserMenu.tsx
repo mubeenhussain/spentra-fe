@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { ThemeToggle } from "@/components/ui";
 import { useAppDispatch } from "@/store";
 import { logout } from "@/store/authSlice";
 
@@ -40,7 +41,7 @@ export function UserMenu({
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="grid size-9 shrink-0 place-items-center overflow-hidden rounded-full border border-slate-200 bg-emerald-50 text-xs font-bold text-[var(--brand)] transition hover:ring-2 hover:ring-emerald-200"
+        className="grid size-9 shrink-0 place-items-center overflow-hidden rounded-full border border-border bg-brand-soft text-xs font-bold text-brand transition hover:ring-2 hover:ring-ring"
       >
         {imageUrl ? (
           <img src={imageUrl} alt={name ?? "User"} className="size-full object-cover" />
@@ -52,19 +53,20 @@ export function UserMenu({
       {open && (
         <div
           role="menu"
-          className="absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg"
+          className="absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-xl border border-border bg-surface py-1 shadow-[var(--shadow)]"
         >
-          <div className="border-b border-slate-100 px-3 py-2.5">
-            <p className="truncate text-sm font-semibold text-slate-900">
+          <div className="border-b border-border-subtle px-3 py-2.5">
+            <p className="truncate text-sm font-semibold text-heading">
               {name ?? "User"}
             </p>
             {email && (
-              <p className="truncate text-xs text-slate-500">{email}</p>
+              <p className="truncate text-xs text-muted">{email}</p>
             )}
           </div>
+          <ThemeToggle />
           <button
             role="menuitem"
-            className="w-full px-3 py-2.5 text-left text-sm font-medium text-red-600 hover:bg-red-50"
+            className="w-full px-3 py-2.5 text-left text-sm font-medium text-danger-text hover:bg-danger-soft"
             onClick={() => {
               setOpen(false);
               dispatch(logout());

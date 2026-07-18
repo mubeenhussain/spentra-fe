@@ -27,10 +27,10 @@ export default function DashboardPage() {
     >
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-950">
+          <h1 className="text-3xl font-bold tracking-tight text-heading">
             Welcome back, {firstName}
           </h1>
-          <p className="mt-2 text-slate-500">
+          <p className="mt-2 text-muted">
             {summary
               ? `${formatMoney(summary.total)} across ${summary.count} expenses`
               : "Your monthly snapshot"}
@@ -45,11 +45,8 @@ export default function DashboardPage() {
         <SummaryCards />
         <section>
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-slate-950">Recent expenses</h2>
-            <Button
-              className="sm:hidden"
-              onClick={() => dispatch(openCreate())}
-            >
+            <h2 className="text-lg font-semibold text-heading">Recent expenses</h2>
+            <Button className="sm:hidden" onClick={() => dispatch(openCreate())}>
               Add
             </Button>
           </div>

@@ -7,7 +7,7 @@ import type {
 } from "react";
 
 const fieldClass =
-  "h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10";
+  "h-12 w-full rounded-xl border border-border bg-surface px-4 text-sm text-foreground outline-none transition placeholder:text-muted-2 focus:border-brand-hover focus:ring-4 focus:ring-ring";
 
 export type FormFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string;
@@ -17,7 +17,7 @@ export function FormField({ label, id, name, ...props }: FormFieldProps) {
   const inputId = id ?? name;
   return (
     <label className="block" htmlFor={inputId}>
-      <span className="mb-2 block text-sm font-medium text-slate-700">{label}</span>
+      <span className="mb-2 block text-sm font-medium text-heading">{label}</span>
       <input {...props} id={inputId} name={name} className={fieldClass} />
     </label>
   );
@@ -38,7 +38,7 @@ export function SelectField({
   const inputId = id ?? name;
   return (
     <label className="block" htmlFor={inputId}>
-      <span className="mb-2 block text-sm font-medium text-slate-700">{label}</span>
+      <span className="mb-2 block text-sm font-medium text-heading">{label}</span>
       <select {...props} id={inputId} name={name} className={fieldClass}>
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>
@@ -51,14 +51,12 @@ export function SelectField({
 }
 
 const variants = {
-  primary: "bg-slate-950 text-white hover:bg-emerald-600",
-  brand:
-    "bg-[var(--brand)] text-white shadow-xl shadow-emerald-950/15 hover:-translate-y-0.5 hover:bg-emerald-600",
-  secondary:
-    "border border-slate-200 bg-white text-slate-700 hover:border-slate-300",
-  ghost: "text-slate-600 hover:text-slate-950",
-  accent: "bg-emerald-400 text-[var(--brand)] hover:bg-[var(--accent)]",
-  danger: "bg-red-600 text-white hover:bg-red-700",
+  primary: "bg-primary text-primary-on hover:bg-primary-hover",
+  brand: "bg-brand text-brand-on shadow-[var(--shadow)] hover:-translate-y-0.5 hover:bg-brand-hover",
+  secondary: "border border-border bg-surface text-heading hover:border-muted-2",
+  ghost: "text-muted hover:text-heading",
+  accent: "bg-accent text-accent-on hover:bg-accent-hover",
+  danger: "bg-danger text-primary-on hover:bg-danger-hover",
 } as const;
 
 type Variant = keyof typeof variants;
@@ -112,7 +110,7 @@ export function LinkButton({
 
 export function Spinner({ label }: { label?: string }) {
   return (
-    <span className="inline-flex items-center gap-2 text-sm text-slate-500">
+    <span className="inline-flex items-center gap-2 text-sm text-muted">
       <span
         aria-hidden="true"
         className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent"
@@ -140,11 +138,9 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-14 text-center">
-      <p className="font-semibold text-slate-900">{title}</p>
-      {description && (
-        <p className="mt-2 text-sm text-slate-500">{description}</p>
-      )}
+    <div className="rounded-2xl border border-dashed border-border bg-surface px-6 py-14 text-center">
+      <p className="font-semibold text-heading">{title}</p>
+      {description && <p className="mt-2 text-sm text-muted">{description}</p>}
       {action && <div className="mt-5 flex justify-center">{action}</div>}
     </div>
   );
@@ -169,19 +165,19 @@ export function Modal({
     <div className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center">
       <button
         aria-label="Close dialog"
-        className="absolute inset-0 bg-slate-950/40"
+        className="absolute inset-0 bg-overlay"
         onClick={onClose}
       />
       <div
         role="dialog"
         aria-modal="true"
-        className="relative z-10 w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl"
+        className="relative z-10 w-full max-w-lg rounded-2xl bg-surface p-6 shadow-[var(--shadow)]"
       >
         <div className="mb-5 flex items-start justify-between gap-4">
-          <h2 className="text-lg font-semibold text-slate-950">{title}</h2>
+          <h2 className="text-lg font-semibold text-heading">{title}</h2>
           <button
             onClick={onClose}
-            className="rounded-lg px-2 py-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+            className="rounded-lg px-2 py-1 text-muted-2 hover:bg-surface-2 hover:text-heading"
           >
             ✕
           </button>
@@ -226,7 +222,7 @@ export function ConfirmDialog({
         </>
       }
     >
-      <p className="text-sm leading-6 text-slate-600">{message}</p>
+      <p className="text-sm leading-6 text-muted">{message}</p>
     </Modal>
   );
 }
@@ -244,7 +240,7 @@ export function Pagination({
 
   return (
     <div className="flex items-center justify-between gap-3 pt-4">
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-muted">
         Page {page} of {totalPages}
       </p>
       <div className="flex gap-2">
@@ -268,3 +264,6 @@ export function Pagination({
     </div>
   );
 }
+
+export { ThemeToggle } from "@/components/ui/ThemeToggle";
+export { ThemeIconButton } from "@/components/ui/ThemeIconButton";

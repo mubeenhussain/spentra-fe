@@ -19,10 +19,10 @@ export default function ExpensesPage() {
       }
     >
       <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-950">
+        <h1 className="text-3xl font-bold tracking-tight text-heading">
           Expenses
         </h1>
-        <p className="mt-2 text-slate-500">
+        <p className="mt-2 text-muted">
           Filter, edit, and keep your spending list clean.
         </p>
       </div>

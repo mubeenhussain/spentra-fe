@@ -154,10 +154,10 @@ export function SummaryCards() {
       {cards.map(([label, value]) => (
         <div
           key={label}
-          className="rounded-2xl border border-slate-200 bg-white p-5"
+          className="rounded-2xl border border-border bg-surface p-5"
         >
-          <p className="text-sm text-slate-500">{label}</p>
-          <p className="mt-2 text-2xl font-semibold text-slate-950">{value}</p>
+          <p className="text-sm text-muted">{label}</p>
+          <p className="mt-2 text-2xl font-semibold text-heading">{value}</p>
         </div>
       ))}
     </div>

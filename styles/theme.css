@@ -1,0 +1,79 @@
+/* Single source of truth for app colors — edit here only */
+
+:root {
+  --background: #f8faf9;
+  --foreground: #0f172a;
+  --surface: #ffffff;
+  --surface-2: #f1f5f4;
+  --surface-3: #e8eeec;
+  --border: #e2e8e6;
+  --border-subtle: #eef2f1;
+  --heading: #0b1220;
+  --muted: #64748b;
+  --muted-2: #94a3b8;
+  --brand: #123c35;
+  --brand-hover: #0f766e;
+  --brand-soft: #ecfdf5;
+  --brand-soft-border: #a7f3d0;
+  --brand-text: #047857;
+  --brand-on: #ecfdf5;
+  --accent: #ffad8c;
+  --accent-hover: #ff9a70;
+  --accent-on: #123c35;
+  --primary: #0f172a;
+  --primary-hover: #0f766e;
+  --primary-on: #ffffff;
+  --danger: #dc2626;
+  --danger-hover: #b91c1c;
+  --danger-soft: #fef2f2;
+  --danger-text: #b91c1c;
+  --overlay: rgb(15 23 42 / 0.4);
+  --ring: rgb(16 185 129 / 0.15);
+  --glow: rgb(167 243 208 / 0.45);
+  --chip-a: #ffedd5;
+  --chip-a-text: #ea580c;
+  --chip-b: #e0f2fe;
+  --chip-b-text: #0284c7;
+  --chip-c: #ede9fe;
+  --chip-c-text: #7c3aed;
+  --shadow: 0 20px 40px rgb(6 78 59 / 0.12);
+}
+
+.dark {
+  --background: #0b1412;
+  --foreground: #e8efed;
+  --surface: #121c1a;
+  --surface-2: #1a2623;
+  --surface-3: #24322e;
+  --border: #2a3a35;
+  --border-subtle: #1f2c28;
+  --heading: #f5faf8;
+  --muted: #94a3a0;
+  --muted-2: #6b7f78;
+  --brand: #1f6b5c;
+  --brand-hover: #2dd4bf;
+  --brand-soft: #14352f;
+  --brand-soft-border: #1f5c50;
+  --brand-text: #5eead4;
+  --brand-on: #ecfdf5;
+  --accent: #ffb89a;
+  --accent-hover: #ffc9b0;
+  --accent-on: #0b1412;
+  --primary: #e8efed;
+  --primary-hover: #2dd4bf;
+  --primary-on: #0b1412;
+  --danger: #f87171;
+  --danger-hover: #ef4444;
+  --danger-soft: #3f1d1d;
+  --danger-text: #fca5a5;
+  --overlay: rgb(0 0 0 / 0.55);
+  --ring: rgb(45 212 191 / 0.2);
+  --glow: rgb(20 83 70 / 0.5);
+  --chip-a: #3b2415;
+  --chip-a-text: #fdba74;
+  --chip-b: #0c2a3a;
+  --chip-b-text: #7dd3fc;
+  --chip-c: #2a1f4a;
+  --chip-c-text: #c4b5fd;
+  --shadow: 0 20px 40px rgb(0 0 0 / 0.35);
+}

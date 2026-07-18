@@ -10,7 +10,7 @@ type Props = {
 
 export function ExpenseFiltersBar({ value, onChange }: Props) {
   return (
-    <div className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-3 rounded-2xl border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-4">
       <FormField
         label="Search title"
         name="title"

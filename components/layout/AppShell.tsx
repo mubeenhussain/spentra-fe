@@ -16,8 +16,8 @@ export function AppShell({
   const { user } = useAppSelector(selectAuth);
 
   return (
-    <main className="min-h-screen bg-[var(--background)]">
-      <header className="border-b border-slate-200/80 bg-white">
+    <main className="min-h-screen bg-background">
+      <header className="border-b border-border/80 bg-surface">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-2 px-4 sm:h-16 sm:gap-4 sm:px-6">
           <div className="flex min-w-0 items-center gap-4 sm:gap-8">
             <BrandMark href="/dashboard" />
@@ -41,7 +41,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
   return (
     <Link
       href={href}
-      className="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-950"
+      className="rounded-lg px-3 py-2 text-sm font-medium text-muted hover:bg-surface-2 hover:text-heading"
     >
       {children}
     </Link>

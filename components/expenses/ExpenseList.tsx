@@ -33,9 +33,7 @@ export function ExpenseList({
         title="No expenses yet"
         description="Add your first expense to start tracking."
         action={
-          onAdd ? (
-            <Button onClick={onAdd}>Add expense</Button>
-          ) : undefined
+          onAdd ? <Button onClick={onAdd}>Add expense</Button> : undefined
         }
       />
     );
@@ -48,16 +46,16 @@ export function ExpenseList({
           {items.map((expense) => (
             <article
               key={expense._id}
-              className="rounded-2xl border border-slate-200 bg-white p-4"
+              className="rounded-2xl border border-border bg-surface p-4"
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="font-semibold text-slate-950">{expense.title}</p>
-                  <p className="mt-1 text-xs text-slate-400">
+                  <p className="font-semibold text-heading">{expense.title}</p>
+                  <p className="mt-1 text-xs text-muted-2">
                     {expense.category} · {formatDate(expense.date)}
                   </p>
                 </div>
-                <p className="font-semibold text-slate-950">
+                <p className="font-semibold text-heading">
                   {formatMoney(expense.amount)}
                 </p>
               </div>
@@ -71,7 +69,7 @@ export function ExpenseList({
                 </Button>
                 <Button
                   variant="ghost"
-                  className="px-3 py-1.5 text-red-600 hover:text-red-700"
+                  className="px-3 py-1.5 text-danger-text hover:text-danger"
                   onClick={() => onDelete(expense._id)}
                 >
                   Delete
@@ -81,9 +79,9 @@ export function ExpenseList({
           ))}
         </div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+        <div className="overflow-hidden rounded-2xl border border-border bg-surface">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-slate-100 bg-slate-50 text-slate-500">
+            <thead className="border-b border-border-subtle bg-surface-2 text-muted">
               <tr>
                 <th className="px-4 py-3 font-medium">Title</th>
                 <th className="hidden px-4 py-3 font-medium sm:table-cell">Category</th>
@@ -94,20 +92,20 @@ export function ExpenseList({
             </thead>
             <tbody>
               {items.map((expense) => (
-                <tr key={expense._id} className="border-b border-slate-50 last:border-0">
-                  <td className="px-4 py-3 font-medium text-slate-900">
+                <tr key={expense._id} className="border-b border-border-subtle last:border-0">
+                  <td className="px-4 py-3 font-medium text-heading">
                     {expense.title}
-                    <p className="mt-0.5 text-xs text-slate-400 sm:hidden">
+                    <p className="mt-0.5 text-xs text-muted-2 sm:hidden">
                       {expense.category}
                     </p>
                   </td>
-                  <td className="hidden px-4 py-3 text-slate-600 sm:table-cell">
+                  <td className="hidden px-4 py-3 text-muted sm:table-cell">
                     {expense.category}
                   </td>
-                  <td className="hidden px-4 py-3 text-slate-600 md:table-cell">
+                  <td className="hidden px-4 py-3 text-muted md:table-cell">
                     {formatDate(expense.date)}
                   </td>
-                  <td className="px-4 py-3 font-semibold">
+                  <td className="px-4 py-3 font-semibold text-heading">
                     {formatMoney(expense.amount)}
                   </td>
                   <td className="px-4 py-3">
@@ -121,7 +119,7 @@ export function ExpenseList({
                       </Button>
                       <Button
                         variant="ghost"
-                        className="px-2 py-1 text-red-600"
+                        className="px-2 py-1 text-danger-text"
                         onClick={() => onDelete(expense._id)}
                       >
                         Delete

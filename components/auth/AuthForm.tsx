@@ -92,13 +92,13 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   return (
     <div className="w-full max-w-md">
       <div className="mb-8">
-        <p className="mb-2 text-sm font-semibold text-emerald-600">
+        <p className="mb-2 text-sm font-semibold text-brand-text">
           {isLogin ? "Welcome back" : "Start saving smarter"}
         </p>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
+        <h1 className="text-3xl font-bold tracking-tight text-heading sm:text-4xl">
           {isLogin ? "Sign in to Spentra" : "Create your account"}
         </h1>
-        <p className="mt-3 text-sm leading-6 text-slate-500">
+        <p className="mt-3 text-sm leading-6 text-muted">
           {isLogin
             ? "Your expenses and monthly insights are waiting."
             : "Track spending and stay on top of every expense."}
@@ -111,7 +111,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
         ))}
 
         {message && (
-          <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
+          <p role="alert" className="rounded-xl bg-danger-soft px-4 py-3 text-sm text-danger-text">
             {message}
           </p>
         )}
@@ -121,11 +121,11 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
         </Button>
       </form>
 
-      <p className="mt-7 text-center text-sm text-slate-500">
+      <p className="mt-7 text-center text-sm text-muted">
         {isLogin ? "New to Spentra?" : "Already have an account?"}{" "}
         <Link
           href={isLogin ? "/signup" : "/login"}
-          className="font-semibold text-emerald-600 hover:text-emerald-700"
+          className="font-semibold text-brand-text hover:text-brand-hover"
         >
           {isLogin ? "Create an account" : "Sign in"}
         </Link>
