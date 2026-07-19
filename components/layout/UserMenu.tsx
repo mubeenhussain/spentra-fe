@@ -38,12 +38,14 @@ export function UserMenu({
     <div className="relative" ref={ref}>
       <button
         type="button"
+        aria-label="Account menu"
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
         className="grid size-9 shrink-0 place-items-center overflow-hidden rounded-full border border-border bg-brand-soft text-xs font-bold text-brand transition hover:ring-2 hover:ring-ring"
       >
         {imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
           <img src={imageUrl} alt={name ?? "User"} className="size-full object-cover" />
         ) : (
           initials(name)
@@ -59,10 +61,18 @@ export function UserMenu({
             <p className="truncate text-sm font-semibold text-heading">
               {name ?? "User"}
             </p>
-            {email && (
-              <p className="truncate text-xs text-muted">{email}</p>
-            )}
+            {email && <p className="truncate text-xs text-muted">{email}</p>}
           </div>
+          <button
+            role="menuitem"
+            className="w-full px-3 py-2.5 text-left text-sm font-medium text-heading hover:bg-surface-2"
+            onClick={() => {
+              setOpen(false);
+              router.push("/profile");
+            }}
+          >
+            Edit profile
+          </button>
           <ThemeToggle />
           <button
             role="menuitem"

@@ -11,7 +11,7 @@ import type {
 
 const defaultFilters: ExpenseFilters = {
   page: 1,
-  limit: 10,
+  limit: 20,
   title: "",
   category: "",
   from: "",

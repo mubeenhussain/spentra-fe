@@ -10,6 +10,7 @@ import type {
   ExpenseResponse,
   Summary,
   UpdateExpenseInput,
+  UpdateProfileInput,
   User,
 } from "@/types";
 
@@ -37,7 +38,14 @@ export const authApi = {
     apiClient.post<AuthResponse>("/auth/register", body, { skipAuth: true }),
   login: (body: { email: string; password: string }) =>
     apiClient.post<AuthResponse>("/auth/login", body, { skipAuth: true }),
-  me: () => apiClient.get<User>("/auth/me"),
+  me: async () => {
+    const res = await apiClient.get<User | { user: User }>("/auth/me");
+    return "user" in res && res.user ? res.user : (res as User);
+  },
+  updateProfile: async (body: UpdateProfileInput) => {
+    const res = await apiClient.put<User | { user: User }>("/auth/profile", body);
+    return "user" in res && res.user ? res.user : (res as User);
+  },
 };
 
 export const expensesApi = {
@@ -49,7 +57,7 @@ export const expensesApi = {
       data: res.expenses ?? [],
       meta: {
         page: res.meta?.page ?? 1,
-        limit: res.meta?.limit ?? 10,
+        limit: res.meta?.limit ?? 20,
         total: res.meta?.total ?? 0,
         totalPages: res.meta?.totalPages ?? 1,
       },
@@ -79,6 +87,7 @@ export const expensesApi = {
         })),
       }
     );
+    if (res.expense) return [res.expense];
     return res.expenses ?? [];
   },
 

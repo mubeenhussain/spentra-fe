@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { formatMoney } from "@/lib/format";
+import { useMoney } from "@/hooks/useMoney";
 import { useAppDispatch, useAppSelector } from "@/store";
 import {
   createExpensesBulk,
@@ -123,7 +123,7 @@ export function ExpensesManager({
       <ConfirmDialog
         open={Boolean(deletingId)}
         title="Delete expense?"
-        message="This cannot be undone. The expense will be removed from your list."
+        message="This cannot be undone. The whole entry (including all items) will be removed."
         loading={status === "saving"}
         onClose={() => dispatch(closeDelete())}
         onConfirm={async () => {
@@ -139,10 +139,11 @@ export function ExpensesManager({
 }
 
 export function SummaryCards() {
+  const money = useMoney();
   const { summary } = useAppSelector(selectExpenses);
 
   const cards = [
-    ["Total spent", formatMoney(summary?.total ?? 0)],
+    ["Total spent", money(summary?.total ?? 0)],
     ["Expenses", String(summary?.count ?? 0)],
     [
       "Top category",

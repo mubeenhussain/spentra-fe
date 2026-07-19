@@ -9,10 +9,11 @@ import { Button, LinkButton } from "@/components/ui";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { openCreate, selectExpenses } from "@/store/expensesSlice";
 import { selectAuth } from "@/store/authSlice";
-import { formatMoney } from "@/lib/format";
+import { useMoney } from "@/hooks/useMoney";
 
 export default function DashboardPage() {
   const dispatch = useAppDispatch();
+  const money = useMoney();
   const { user } = useAppSelector(selectAuth);
   const { summary } = useAppSelector(selectExpenses);
   const firstName = (user?.name ?? "there").split(" ")[0];
@@ -32,7 +33,7 @@ export default function DashboardPage() {
           </h1>
           <p className="mt-2 text-muted">
             {summary
-              ? `${formatMoney(summary.total)} across ${summary.count} expenses`
+              ? `${money(summary.total)} across ${summary.count} expenses`
               : "Your monthly snapshot"}
           </p>
         </div>

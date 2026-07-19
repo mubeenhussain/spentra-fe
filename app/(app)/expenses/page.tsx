@@ -27,7 +27,7 @@ export default function ExpensesPage() {
         </p>
       </div>
 
-      <ExpensesManager mode="table" showFilters />
+      <ExpensesManager mode="cards" showFilters />
     </AppShell>
   );
 }

@@ -17,8 +17,18 @@ export interface User {
   _id: string;
   name: string;
   email: string;
+  currency?: string;
+  location?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+/** PUT /auth/profile */
+export interface UpdateProfileInput {
+  name?: string;
+  email?: string;
+  currency?: string;
+  location?: string;
 }
 
 /** Auth register/login response */
@@ -27,15 +37,29 @@ export interface AuthResponse {
   user: User;
 }
 
-/** Expense document owned by a user */
-export interface Expense {
+/** Nested item inside a bulk expense document */
+export interface ExpenseItem {
   _id: string;
-  userId: string;
   title: string;
   amount: number;
   category: ExpenseCategory;
   date: string;
   note?: string;
+}
+
+/** Expense document — `single` or `bulk` (items[]) */
+export interface Expense {
+  _id: string;
+  userId: string;
+  kind?: "single" | "bulk";
+  title: string;
+  amount: number;
+  category: ExpenseCategory;
+  date: string;
+  note?: string;
+  totalAmount?: number;
+  count?: number;
+  items?: ExpenseItem[];
   createdAt: string;
   updatedAt: string;
 }
@@ -56,7 +80,8 @@ export interface BulkCreateExpenseInput {
 
 export interface BulkCreateExpenseResponse {
   count: number;
-  expenses: Expense[];
+  expenses?: Expense[];
+  expense?: Expense;
 }
 
 /** Payload for updating an expense (partial) */

@@ -5,6 +5,7 @@ import type {
   ReactNode,
   SelectHTMLAttributes,
 } from "react";
+import { COUNTRIES, CURRENCIES } from "@/lib/options";
 
 const fieldClass =
   "h-12 w-full rounded-xl border border-border bg-surface px-4 text-sm text-foreground outline-none transition placeholder:text-muted-2 focus:border-brand-hover focus:ring-4 focus:ring-ring";
@@ -47,6 +48,30 @@ export function SelectField({
         ))}
       </select>
     </label>
+  );
+}
+
+type SelectBase = Omit<SelectFieldProps, "options" | "label"> & {
+  label?: string;
+};
+
+export function CurrencySelect({ label = "Currency", ...props }: SelectBase) {
+  return (
+    <SelectField
+      label={label}
+      options={[...CURRENCIES]}
+      {...props}
+    />
+  );
+}
+
+export function CountrySelect({ label = "Country", ...props }: SelectBase) {
+  return (
+    <SelectField
+      label={label}
+      options={[...COUNTRIES]}
+      {...props}
+    />
   );
 }
 

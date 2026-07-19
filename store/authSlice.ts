@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { authApi } from "@/lib/services";
 import { clearToken, getToken, setToken } from "@/lib/api";
-import type { User } from "@/types";
+import type { UpdateProfileInput, User } from "@/types";
 import { ApiClientError } from "@/lib/api";
 
 interface AuthState {
@@ -56,6 +56,17 @@ export const fetchMe = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       return await authApi.me();
+    } catch (err) {
+      return rejectWithValue(getErrorMessage(err));
+    }
+  }
+);
+
+export const updateProfile = createAsyncThunk(
+  "auth/updateProfile",
+  async (body: UpdateProfileInput, { rejectWithValue }) => {
+    try {
+      return await authApi.updateProfile(body);
     } catch (err) {
       return rejectWithValue(getErrorMessage(err));
     }
@@ -117,7 +128,14 @@ const authSlice = createSlice({
         state.token = null;
         state.status = "idle";
         clearToken();
-      });
+      })
+      .addCase(updateProfile.pending, pending)
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.user = action.payload;
+        state.error = null;
+      })
+      .addCase(updateProfile.rejected, rejected);
   },
 });
 
