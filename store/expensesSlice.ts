@@ -81,6 +81,18 @@ export const createExpense = createAsyncThunk(
   }
 );
 
+export const createExpensesBulk = createAsyncThunk(
+  "expenses/createBulk",
+  async (expenses: CreateExpenseInput[], { rejectWithValue }) => {
+    try {
+      if (expenses.length === 1) return [await expensesApi.create(expenses[0])];
+      return await expensesApi.createBulk({ expenses });
+    } catch (err) {
+      return rejectWithValue(getErrorMessage(err));
+    }
+  }
+);
+
 export const updateExpense = createAsyncThunk(
   "expenses/update",
   async (
@@ -150,10 +162,15 @@ const expensesSlice = createSlice({
       })
       .addCase(fetchExpenses.fulfilled, (state, action) => {
         state.status = "idle";
-        state.items = action.payload.data;
-        state.meta = action.payload.meta;
-        if ((state.filters.page ?? 1) === 1 && !state.filters.title && !state.filters.category) {
-          state.recent = action.payload.data.slice(0, 5);
+        const data = action.payload.data ?? [];
+        state.items = data;
+        state.meta = action.payload.meta ?? state.meta;
+        if (
+          (state.filters.page ?? 1) === 1 &&
+          !state.filters.title &&
+          !state.filters.category
+        ) {
+          state.recent = data.slice(0, 5);
         }
       })
       .addCase(fetchExpenses.rejected, (state, action) => {
@@ -163,16 +180,39 @@ const expensesSlice = createSlice({
       .addCase(fetchSummary.fulfilled, (state, action) => {
         state.summary = action.payload;
       })
+      .addCase(fetchSummary.rejected, (state) => {
+        // Backend may not expose summary yet — keep UI usable
+        state.summary = state.summary ?? { total: 0, count: 0, byCategory: [] };
+      })
       .addCase(createExpense.pending, (state) => {
         state.status = "saving";
         state.error = null;
       })
-      .addCase(createExpense.fulfilled, (state) => {
+      .addCase(createExpense.fulfilled, (state, action) => {
         state.status = "idle";
         state.formOpen = false;
         state.editing = null;
+        state.items = [action.payload, ...state.items];
+        state.recent = [action.payload, ...state.recent].slice(0, 5);
+        state.meta.total += 1;
       })
       .addCase(createExpense.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = String(action.payload ?? "Failed to create");
+      })
+      .addCase(createExpensesBulk.pending, (state) => {
+        state.status = "saving";
+        state.error = null;
+      })
+      .addCase(createExpensesBulk.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.formOpen = false;
+        state.editing = null;
+        state.items = [...action.payload, ...state.items];
+        state.recent = [...action.payload, ...state.recent].slice(0, 5);
+        state.meta.total += action.payload.length;
+      })
+      .addCase(createExpensesBulk.rejected, (state, action) => {
         state.status = "failed";
         state.error = String(action.payload ?? "Failed to create");
       })
@@ -180,10 +220,16 @@ const expensesSlice = createSlice({
         state.status = "saving";
         state.error = null;
       })
-      .addCase(updateExpense.fulfilled, (state) => {
+      .addCase(updateExpense.fulfilled, (state, action) => {
         state.status = "idle";
         state.formOpen = false;
         state.editing = null;
+        state.items = state.items.map((e) =>
+          e._id === action.payload._id ? action.payload : e
+        );
+        state.recent = state.recent.map((e) =>
+          e._id === action.payload._id ? action.payload : e
+        );
       })
       .addCase(updateExpense.rejected, (state, action) => {
         state.status = "failed";

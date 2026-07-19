@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { formatMoney } from "@/lib/format";
 import { useAppDispatch, useAppSelector } from "@/store";
 import {
-  createExpense,
+  createExpensesBulk,
   deleteExpense,
   fetchExpenses,
   fetchSummary,
@@ -100,22 +100,23 @@ export function ExpensesManager({
       )}
 
       <ExpenseFormModal
-        key={editing?._id ?? "create"}
+        key={editing?._id ?? (formOpen ? "create-open" : "create")}
         open={formOpen}
         expense={editing}
         loading={status === "saving"}
         error={formOpen ? error : null}
         onClose={() => dispatch(closeForm())}
-        onSubmit={async (body) => {
-          const action = editing
-            ? await dispatch(updateExpense({ id: editing._id, body }))
-            : await dispatch(createExpense(body));
-          if (
-            createExpense.fulfilled.match(action) ||
-            updateExpense.fulfilled.match(action)
-          ) {
-            await refresh();
+        onSubmit={async (items) => {
+          if (editing) {
+            const action = await dispatch(
+              updateExpense({ id: editing._id, body: items[0] })
+            );
+            if (updateExpense.fulfilled.match(action)) await refresh();
+            return;
           }
+
+          const action = await dispatch(createExpensesBulk(items));
+          if (createExpensesBulk.fulfilled.match(action)) await refresh();
         }}
       />
 

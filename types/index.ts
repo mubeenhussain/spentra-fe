@@ -49,6 +49,16 @@ export interface CreateExpenseInput {
   note?: string;
 }
 
+/** POST /expenses/bulk */
+export interface BulkCreateExpenseInput {
+  expenses: CreateExpenseInput[];
+}
+
+export interface BulkCreateExpenseResponse {
+  count: number;
+  expenses: Expense[];
+}
+
 /** Payload for updating an expense (partial) */
 export type UpdateExpenseInput = Partial<CreateExpenseInput>;
 
@@ -62,8 +72,21 @@ export interface ExpenseFilters {
   title?: string;
 }
 
-/** Paginated expense list response */
+/** Paginated expense list response (backend shape) */
 export interface ExpenseListResponse {
+  expenses: Expense[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNextPage?: boolean;
+    hasPrevPage?: boolean;
+  };
+}
+
+/** Normalized list used by the UI/store */
+export interface ExpenseListResult {
   data: Expense[];
   meta: {
     page: number;
@@ -71,6 +94,10 @@ export interface ExpenseListResponse {
     total: number;
     totalPages: number;
   };
+}
+
+export interface ExpenseResponse {
+  expense: Expense;
 }
 
 /** Per-category total in monthly summary */
