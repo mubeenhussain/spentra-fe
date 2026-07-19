@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { isBulkExpense } from "@/lib/format";
 import { useMoney } from "@/hooks/useMoney";
 import { useAppDispatch, useAppSelector } from "@/store";
 import {
@@ -108,8 +109,11 @@ export function ExpensesManager({
         onClose={() => dispatch(closeForm())}
         onSubmit={async (items) => {
           if (editing) {
+            const body = isBulkExpense(editing)
+              ? { expenses: items }
+              : items[0];
             const action = await dispatch(
-              updateExpense({ id: editing._id, body: items[0] })
+              updateExpense({ id: editing._id, body })
             );
             if (updateExpense.fulfilled.match(action)) await refresh();
             return;

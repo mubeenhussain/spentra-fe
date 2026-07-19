@@ -83,31 +83,82 @@ function ExpenseRow({
   }`;
 
   const actions = (
-    <div className="flex gap-1">
+    <div className="flex items-center gap-0.5">
       {bulk && items.length > 0 && (
         <Button
           variant="ghost"
           className="px-2 py-1"
+          aria-label={open ? "Hide" : "Open"}
+          title={open ? "Hide" : "Open"}
           onClick={() => setOpen((v) => !v)}
         >
-          {open ? "Hide" : "Open"}
-        </Button>
-      )}
-      {!bulk && (
-        <Button
-          variant="ghost"
-          className="px-2 py-1"
-          onClick={() => onEdit(expense)}
-        >
-          Edit
+          <svg
+            viewBox="0 0 24 24"
+            className="size-4"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            aria-hidden
+          >
+            {open ? (
+              <path
+                d="M18 15 12 9 6 15"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            ) : (
+              <path
+                d="M6 9l6 6 6-6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            )}
+          </svg>
         </Button>
       )}
       <Button
         variant="ghost"
+        className="px-2 py-1"
+        aria-label="Edit"
+        title="Edit"
+        onClick={() => onEdit(expense)}
+      >
+        <svg
+          viewBox="0 0 24 24"
+          className="size-4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          aria-hidden
+        >
+          <path
+            d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </Button>
+      <Button
+        variant="ghost"
         className="px-2 py-1 text-danger-text"
+        aria-label="Delete"
+        title="Delete"
         onClick={() => onDelete(expense._id)}
       >
-        Delete
+        <svg
+          viewBox="0 0 24 24"
+          className="size-4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          aria-hidden
+        >
+          <path
+            d="M3 6h18M8 6V4h8v2m-1 0v14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V6h10Z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
       </Button>
     </div>
   );

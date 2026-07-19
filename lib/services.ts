@@ -95,6 +95,14 @@ export const expensesApi = {
     const payload = {
       ...body,
       ...(body.date ? { date: toApiDate(body.date) } : {}),
+      ...(body.expenses
+        ? {
+            expenses: body.expenses.map((item) => ({
+              ...item,
+              date: toApiDate(item.date),
+            })),
+          }
+        : {}),
     };
     const res = await apiClient.put<ExpenseResponse>(`/expenses/${id}`, payload);
     return res.expense;

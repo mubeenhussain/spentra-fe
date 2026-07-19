@@ -85,7 +85,9 @@ export interface BulkCreateExpenseResponse {
 }
 
 /** Payload for updating an expense (partial) */
-export type UpdateExpenseInput = Partial<CreateExpenseInput>;
+export type UpdateExpenseInput = Partial<CreateExpenseInput> & {
+  expenses?: CreateExpenseInput[];
+};
 
 /** Query filters for listing expenses */
 export interface ExpenseFilters {

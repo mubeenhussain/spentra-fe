@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { Button, FormField, Modal, SelectField } from "@/components/ui";
-import { toDateInput } from "@/lib/format";
+import { isBulkExpense, toDateInput } from "@/lib/format";
 import {
   EXPENSE_CATEGORIES,
   type CreateExpenseInput,
@@ -37,6 +37,20 @@ function emptyRow(): Row {
   };
 }
 
+function rowsFromExpense(expense?: Expense | null): Row[] {
+  if (!expense?.items?.length) return [emptyRow()];
+  return expense.items.map((item) => {
+    const custom = Boolean(item.title && item.title !== item.category);
+    return {
+      key: item._id || crypto.randomUUID(),
+      title: custom ? item.title : "",
+      customTitle: custom,
+      amount: String(item.amount ?? ""),
+      category: item.category,
+    };
+  });
+}
+
 export function ExpenseFormModal({
   open,
   expense,
@@ -46,9 +60,18 @@ export function ExpenseFormModal({
   onSubmit,
 }: Props) {
   const editing = Boolean(expense);
-  const [rows, setRows] = useState<Row[]>([emptyRow()]);
-  const [sharedDate, setSharedDate] = useState(toDateInput());
-  const [sharedNote, setSharedNote] = useState("");
+  const editingBulk = Boolean(expense && isBulkExpense(expense));
+  const editingSingle = editing && !editingBulk;
+
+  const [rows, setRows] = useState<Row[]>(() =>
+    editingBulk ? rowsFromExpense(expense) : [emptyRow()]
+  );
+  const [sharedDate, setSharedDate] = useState(
+    toDateInput(expense?.date ?? expense?.items?.[0]?.date)
+  );
+  const [sharedNote, setSharedNote] = useState(
+    expense?.note ?? expense?.items?.[0]?.note ?? ""
+  );
 
   function updateRow(key: string, patch: Partial<Row>) {
     setRows((prev) => prev.map((r) => (r.key === key ? { ...r, ...patch } : r)));
@@ -57,7 +80,7 @@ export function ExpenseFormModal({
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    if (editing && expense) {
+    if (editingSingle && expense) {
       const fd = new FormData(e.currentTarget);
       onSubmit([
         {
@@ -89,6 +112,8 @@ export function ExpenseFormModal({
     onSubmit(items);
   }
 
+  const multiForm = !editingSingle;
+
   return (
     <Modal
       open={open}
@@ -96,7 +121,7 @@ export function ExpenseFormModal({
       onClose={onClose}
     >
       <form className="max-h-[70vh] space-y-4 overflow-y-auto pr-1" onSubmit={handleSubmit}>
-        {editing ? (
+        {editingSingle ? (
           <>
             <FormField
               label="Title"
@@ -266,7 +291,7 @@ export function ExpenseFormModal({
           <Button type="submit" loading={loading}>
             {editing
               ? "Save changes"
-              : rows.length > 1
+              : multiForm && rows.length > 1
                 ? `Add ${rows.length} expenses`
                 : "Add expense"}
           </Button>
